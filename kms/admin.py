@@ -5,6 +5,7 @@ from django.db.models import Subquery
 from django.contrib.gis import admin as gisadmin
 from django.contrib.gis.forms.widgets import OSMWidget
 
+
 class CustomBotesFilter(admin.SimpleListFilter):
     title = 'Per bota'
     parameter_name = 'kms_kms'
@@ -22,48 +23,6 @@ class CustomBotesFilter(admin.SimpleListFilter):
         if self.value() is None :
             return queryset
         return queryset.filter(bota__exact=self.value())
-
-
-class CustomGeoWidget(OSMWidget):
-    template_name = 'gis/admin/openlayers-cust.html'
-    class Media:
-        css = {
-            "all": (
-                "https://cdnjs.cloudflare.com/ajax/libs/ol3/4.6.5/ol.css",
-                "gis/css/ol3.css",
-            )
-        }
-        js = (
-            "https://cdnjs.cloudflare.com/ajax/libs/ol3/4.6.5/ol.js",
-            "static-2/gis/js/OLMapWidget.js",
-        )    
-
-
-class KmsAdmin(gisadmin.GISModelAdmin):
-    list_filter = (CustomBotesFilter,)
-    # gis_widget = CustomGeoWidget
-    ordering = ('-date', 'distancia', 'ruta')
-    list_display = ("ruta", "date", "distancia","gpx_file",)
-    # readonly_fields = ["geom"]
-
-    class Meta:
-        widgets = {
-            'geom': CustomGeoWidget
-        }
-
-    def get_readonly_fields(self, request, obj=None):
-        return []
-        # if obj.geom is None:
-        #     return ["geom"]
-        # else:
-        #     return []
-        # else:
-        #     return super(TranslationAdmin, self).get_readonly_fields(request, obj)
-
-    def get_ordering(self, request):
-        return ['-date']
-
-    exclude = ('botes',)
 
 
 class BotesAdmin(admin.ModelAdmin):
@@ -88,9 +47,37 @@ class BotesAdmin(admin.ModelAdmin):
     total.admin_order_field = 'total'
     last_date.admin_order_field = 'last_date'
 
+
+class CustomGeoWidget(OSMWidget):
+    template_name = 'gis/custom_layers.html'
+
+
+class KmsAdmin(gisadmin.GISModelAdmin):
+    list_filter = (CustomBotesFilter,)
+    gis_widget = CustomGeoWidget
+    ordering = ('-date', 'distancia', 'ruta')
+    list_display = ("ruta", "date", "distancia","gpx_file",)
+    gis_widget_kwargs = {
+        'attrs': {
+            'default_zoom': 14,
+            'default_lon': 3.4825,
+            'default_lat': 50.1906,
+        },
+    }
+
+    class Meta:
+        widgets = {
+            'geom': CustomGeoWidget
+        }
+
+    def get_readonly_fields(self, request, obj=None):
+        return []
+
+    def get_ordering(self, request):
+        return ['-date']
+
+    exclude = ('botes',)
+
+
 admin.site.register(Botes, BotesAdmin)
 admin.site.register(Kms, KmsAdmin)
-
-# admin.site.register(Kms, KmsAdmin)
-# geoadmin.site.register(GPXPoint, geoadmin.OSMGeoAdmin)
-# geoadmin.site.register(GPXTrack, geoadmin.OSMGeoAdmin)
