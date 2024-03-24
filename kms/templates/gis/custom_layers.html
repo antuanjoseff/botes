@@ -1,7 +1,14 @@
 {% load i18n l10n %}
-
+<style>
+    #track-length{
+        text-align: center;
+        font-weight: 900;
+        font-size:1.2em;
+    }
+</style>
 <div id="{{ id }}_div_map" class="dj_map_wrapper">
     {# RemovedInDjango51Warning: when the deprecation ends, remove data-width and data-height attributes. #}
+    <div id="track-length"></div>
     <div id="{{ id }}_map" class="dj_map" data-width="{{ map_width }}" data-height="{{ map_height }}"></div>
     {% if not disabled %}<span class="clear_features"><a href="">{% translate "Delete all Features" %}</a></span>{% endif %}
     {% if display_raw %}<p>{% translate "Debugging window (serialized value)" %}</p>{% endif %}

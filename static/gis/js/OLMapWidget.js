@@ -115,13 +115,16 @@ class MapWidget {
         if (initial_value) {
             const jsonFormat = new ol.format.GeoJSON();
             const features = jsonFormat.readFeatures('{"type": "Feature", "geometry": ' + initial_value + '}');
+            
+            var length = ol.sphere.getLength(features[0].getGeometry())
+            document.getElementById('track-length').innerHTML = this.formatDistance(length)
             const extent = ol.extent.createEmpty();
             features.forEach(function(feature) {
                 this.featureOverlay.getSource().addFeature(feature);
                 ol.extent.extend(extent, feature.getGeometry().getExtent());
             }, this);
             // Center/zoom the map
-            this.map.getView().fit(extent, {minResolution: 1});
+            this.map.getView().fit(extent, {minResolution: 1, padding: [20, 20, 20, 20]});
         } else {
             this.map.getView().setCenter(this.defaultCenter());
         }
@@ -137,6 +140,18 @@ class MapWidget {
             });
         }
         this.ready = true;
+    }
+
+    formatDistance (distance) {
+        var kms, meters;
+        if (distance >= 1000) {
+            kms = Math.floor(distance / 1000)
+            meters = Math.floor(distance - (kms * 1000))
+            return kms + 'kms ' + meters + 'm'
+        } else {
+            meters = Math.floor(distance)
+            return meters + 'm'
+        }
     }
 
     createMap() {
