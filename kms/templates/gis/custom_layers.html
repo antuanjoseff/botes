@@ -26,7 +26,12 @@
             id: '{{ id }}',
             map_id: '{{ id }}_map',
             map_srid: {{ map_srid|unlocalize }},
-            name: '{{ name }}'
+            name: '{{ name }}',
+            default_lat: 41.95,
+            default_lon: 3,
+            default_zoom: {{default_zoom}},
+            default_lat: {{default_lat}},
+            default_lon: {{default_lon}},
         };
         {% endblock %}
         var {{ module }} = new MapWidget(options);
