@@ -126,7 +126,7 @@ class Kms(models.Model):
                     self.geom = MultiLineString(new_track_segment)
                     # self.elevations = ar_elevations
                     # self.times = ar_times
-                    print(self.geom)
+                    #print(self.geom)
         super(Kms, self).save(*args, **kwargs)
 
     def __str__(self):
